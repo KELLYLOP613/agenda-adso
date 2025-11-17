@@ -1,49 +1,9 @@
-/*Estilos globales para toda la app React*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/*Fuente base y fondo general*/
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-/*Enlaces*/
-a {
-  color: #008037; /*Verde SENA*/
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/*Botones genericos*/
-button {
-  background-color: #39A900;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-button:hover {
-  background-color: #006b2f; /*Verde mas oscuro*/
-}
-
-/*Imagenes responsivas*/
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/*Centramos el contenido principal*/
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-800 font-sans;
+  }
 }
