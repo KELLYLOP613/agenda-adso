@@ -1,0 +1,25 @@
+{
+  "contactos": [
+    {
+      "id": "31c2",
+      "nombre": "Maribel Hernandez",
+      "telefono": "3002478964",
+      "correo": "marihernan@sena.edu.co",
+      "etiqueta": "profe"
+    },
+    {
+      "id": "49bb",
+      "nombre": "Juan Mazo",
+      "telefono": "3052287169",
+      "correo": "juanmazo@sena.edu.co",
+      "etiqueta": "estudiante"
+    },
+    {
+      "id": "4c12",
+      "nombre": "Naomi Lopera",
+      "telefono": "3055748928",
+      "correo": "naolopera@sena.edu.co",
+      "etiqueta": "estudiante"
+    }
+  ]
+}
