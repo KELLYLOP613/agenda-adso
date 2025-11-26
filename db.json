@@ -20,6 +20,20 @@
       "telefono": "3055748928",
       "correo": "naolopera@sena.edu.co",
       "etiqueta": "estudiante"
+    },
+    {
+      "id": "0b83",
+      "nombre": "madi manuela ortiz",
+      "telefono": "3001256646",
+      "correo": "madi@sena.edu.co",
+      "etiqueta": ""
+    },
+    {
+      "id": "2dcf",
+      "nombre": "Carlos Lopera",
+      "telefono": "3154896325",
+      "correo": "carloslop@sena.edu.co",
+      "etiqueta": "Trabajador"
     }
   ]
 }
