@@ -2,7 +2,9 @@
 // Se encarga de:
 // - Cargar la lista de contactos desde la API.
 // - Manejar estados globales (contactos, carga, error).
-// - Conectar el formulario y las tarjetas de contactos.
+// - Manejar el contacto en edición.
+// - Conectar el formulario, el buscador y las tarjetas de contactos.
+// - Aplicar búsqueda, ordenamiento y edición.
 
 // Importamos hooks de React
 import { useEffect, useState } from "react";
@@ -11,6 +13,7 @@ import { useEffect, useState } from "react";
 import {
   listarContactos,
   crearContacto,
+  actualizarContacto,
   eliminarContactoPorId,
 } from "./api";
 
@@ -39,6 +42,9 @@ function App() {
 
   // Estado para el orden de los contactos: true = A-Z, false = Z-A
   const [ordenAsc, setOrdenAsc] = useState(true);
+
+  // Estado para saber qué contacto estamos editando (o null si no editamos)
+  const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
 
 
   // useEffect que se ejecuta una sola vez al montar el componente.
@@ -92,6 +98,33 @@ function App() {
     }
   };
 
+    // Función para actualizar un contacto (UPDATE)
+  const onActualizarContacto = async (contactoActualizado) => {
+    try {
+      setError(""); // Limpiamos errores previos
+
+      // Llamamos a la API para actualizar el contacto por id
+      const actualizado = await actualizarContacto(
+        contactoActualizado.id,
+        contactoActualizado
+      );
+
+      // Recorremos la lista y reemplazamos el contacto que coincida por id
+      setContactos((prev) =>
+        prev.map((c) => (c.id === actualizado.id ? actualizado : c))
+      );
+
+      // Limpiamos el contacto en edición (salimos de modo edición)
+      setContactoEnEdicion(null);
+    } catch (error) {
+      console.error("Error al actualizar contacto:", error);
+      setError(
+        "No se pudo actualizar el contacto. Verifica tu conexión o el servidor e intenta nuevamente."
+      );
+      throw error;
+    }
+  };
+
   // Función para eliminar un contacto por su id (DELETE)
   const onEliminarContacto = async (id) => {
     try {
@@ -100,6 +133,12 @@ function App() {
 
       // Filtramos el contacto eliminado de la lista local
       setContactos((prev) => prev.filter((c) => c.id !== id));
+
+       // Si el contacto que se elimina estaba en edición, cancelamos la edición
+      setContactoEnEdicion((actual) =>
+        actual && actual.id === id ? null : actual
+      );
+
     } catch (error) {
       // Mostramos el error en consola para depurar
       console.error("Error al eliminar contacto:", error);
@@ -109,6 +148,17 @@ function App() {
         "No se pudo eliminar el contacto. Vuelve a intentarlo o verifica el servidor."
       );
     }
+  };
+
+  // Función para activar el modo edición al hacer clic en "Editar"
+  const onEditarClick = (contacto) => {
+    setContactoEnEdicion(contacto); // Guardamos el contacto que se va a editar
+    setError(""); // Limpiamos posibles errores previos
+  };
+
+  // Función para cancelar la edición y volver a modo "crear"
+  const onCancelarEdicion = () => {
+    setContactoEnEdicion(null);
   };
 
   // === LÓGICA DE BÚSQUEDA Y ORDENAMIENTO (CLASE 10) ===
@@ -175,8 +225,13 @@ function App() {
           <p className="text-sm text-gray-500">Cargando contactos...</p>
         ) : (
           <>
-            {/* Formulario para crear nuevos contactos */}
-            <FormularioContacto onAgregar={onAgregarContacto} />
+            {/* Formulario para crear o editar contactos */}
+              <FormularioContacto
+              onAgregar={onAgregarContacto}
+              onActualizar={onActualizarContacto}
+              contactoEnEdicion={contactoEnEdicion}
+              onCancelarEdicion={onCancelarEdicion}
+            />
 
             {/* === NUEVO: Buscador y botón de orden (CLASE 10) === */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
@@ -190,23 +245,15 @@ function App() {
                 onChange={(e) => setBusqueda(e.target.value)} // Actualiza el estado
               />
 
-              {/* Nuevo: contador de resultados */}
-              <span className="text-sm text-gray-500 whitespace-nowrap">
-                {contactosOrdenados.length}{" "}
-                {contactosOrdenados.length === 1 ? "contacto" : "contactos"}
-              </span>
-            </div>
-
-              {/* Botón para alternar el orden A-Z / Z-A */}
-              <button
+               <button
                 type="button"
-                onClick={() => setOrdenAsc((prev) => !prev)}  // Alternar A-Z / Z-A
+                onClick={() => setOrdenAsc((prev) => !prev)}
                 className="bg-gray-100 text-gray-700 text-sm px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-200"
               >
-              {/* Texto dinámico según el estado ordenAsc */}
                 {ordenAsc ? "Ordenar Z-A" : "Ordenar A-Z"}
               </button>
             </div>
+          </div>
 
             {/* Listado de contactos (usa contactosOrdenados) */}
             <section className="space-y-4">
@@ -226,6 +273,7 @@ function App() {
                   etiqueta={c.etiqueta}
                   // onEliminar es una función que llama a onEliminarContacto con el id
                   onEliminar={() => onEliminarContacto(c.id)}
+                  onEditar={() => onEditarClick(c)}
                 />
               ))
             )}
