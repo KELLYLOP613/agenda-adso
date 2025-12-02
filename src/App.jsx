@@ -168,6 +168,11 @@ function App() {
   // Variables auxiliares para saber en qué vista estamos
   const estaEnVistaCrear = vista === "crear";
   const estaEnVistaContactos = vista === "contactos";
+  // Nuevo indicador: último contacto agregado
+  const ultimoContacto = contactos.length > 0
+  ? contactos[contactos.length - 1]
+  : null;
+
 
   // JSX principal (layout tipo dashboard)
   return (
@@ -365,6 +370,18 @@ function App() {
                     {contactos.length}
                   </span>
                 </p>
+                
+                {/* Nuevo indicador: Último contacto agregado */}
+                <p className="flex items-center justify-between">
+                  <span className="text-purple-100">
+                    Último contacto agregado
+                  </span>
+
+                  <span className="font-semibold text-white text-sm">
+                    {ultimoContacto ? ultimoContacto.nombre : "—"}
+                  </span>
+                </p>
+
                 <p className="text-[11px] text-purple-100/80">
                   Usa este proyecto como evidencia en tu portafolio de
                   Desarrollo Web – ReactJS.
